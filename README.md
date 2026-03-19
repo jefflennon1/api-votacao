@@ -31,25 +31,17 @@ Antes de rodar o projeto, você vai precisar ter instalado na sua máquina:
 
 ## Configuração do banco de dados
 
-1. Acesse o MySQL e crie o banco de dados:
+1. Acesse o MySQL e crie usuario E SENHA com o nome:
 
-```sql
-CREATE DATABASE api_votacao;
+```
+root
 ```
 
-2. Configure as credenciais no arquivo `src/main/resources/application.properties`:
+2. O arquivo `src/main/resources/application.properties` já possui instruções automáticas de criação do banco de dados, desde que o usuário e senha sejam root e o banco de dados esteja configurado na porta 3306:
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/api_votacao
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+```
+spring.datasource.url=jdbc:mysql://localhost:3306/api-votacao?createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
 
-spring.jpa.hibernate.ddl-auto=validate
-spring.jpa.show-sql=true
-
-server.port=8081
-server.servlet.context-path=/api-votacao
 ```
 
 > As tabelas serão criadas automaticamente pelo **Flyway** na primeira execução. Dados de exemplo também serão inseridos automaticamente para facilitar os testes.
@@ -197,9 +189,16 @@ Resposta:
 ---
 
 ## Rodando os testes
+ - Você pode executar os testes unitários pela linha de comanddo utilizando:
 
 ```bash
 mvn test
+```
+
+- Caso você esteja utilizando a IDE Spring Tools (assim como eu) você pode executar os testes utilizando o seguinte fluxo:
+
+```
+Clique com o botão direito em cima do projeto > Run As > JUnit Test
 ```
 
 ---
