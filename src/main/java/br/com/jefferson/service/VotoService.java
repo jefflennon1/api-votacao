@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import br.com.jefferson.dto.ResultadoVotacaoResponse;
 import br.com.jefferson.dto.VotoRequest;
 import br.com.jefferson.dto.VotoResponse;
+import br.com.jefferson.exception.AssociadoJaVotouException;
+import br.com.jefferson.exception.PautaNaoEncontradaException;
+import br.com.jefferson.exception.SessaoEncerradaException;
 import br.com.jefferson.model.Pauta;
 import br.com.jefferson.model.Voto;
 import br.com.jefferson.repository.PautaRepository;
@@ -28,14 +31,14 @@ public class VotoService {
         log.info("Registrando voto. Pauta ID: {}, Associado ID: {}", pautaId, request.getAssociadoId());
 
         Pauta pauta = pautaRepository.findById(pautaId)
-                .orElseThrow(() -> new RuntimeException("Pauta não encontrada com ID: " + pautaId));
+                .orElseThrow(() -> new PautaNaoEncontradaException(pautaId));
 
         if (!sessaoVotacaoService.isSessaoAberta(pautaId)) {
-            throw new RuntimeException("Sessão de votação encerrada ou não iniciada para esta pauta");
+            throw new SessaoEncerradaException(pautaId);
         }
 
         if (votoRepository.existsByPautaIdAndAssociadoId(pautaId, request.getAssociadoId())) {
-            throw new RuntimeException("Associado já votou nesta pauta");
+            throw new AssociadoJaVotouException(request.getAssociadoId());
         }
 
         Voto voto = Voto.builder()

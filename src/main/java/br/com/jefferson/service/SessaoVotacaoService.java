@@ -1,17 +1,20 @@
 package br.com.jefferson.service;
 
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+
 import br.com.jefferson.dto.SessaoVotacaoRequest;
 import br.com.jefferson.dto.SessaoVotacaoResponse;
+import br.com.jefferson.exception.PautaNaoEncontradaException;
+import br.com.jefferson.exception.SessaoJaExisteException;
 import br.com.jefferson.model.Pauta;
 import br.com.jefferson.model.SessaoVotacao;
 import br.com.jefferson.repository.PautaRepository;
 import br.com.jefferson.repository.SessaoVotacaoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -27,10 +30,11 @@ public class SessaoVotacaoService {
         log.info("Abrindo sessão de votação para pauta ID: {}", pautaId);
 
         Pauta pauta = pautaRepository.findById(pautaId)
-                .orElseThrow(() -> new RuntimeException("Pauta não encontrada com ID: " + pautaId));
+                .orElseThrow(() -> new PautaNaoEncontradaException(pautaId));
 
         sessaoVotacaoRepository.findByPautaId(pautaId).ifPresent(s -> {
-            throw new RuntimeException("Já existe uma sessão de votação para esta pauta: " + s.toString());
+        	log.error(s.toString());
+            throw new SessaoJaExisteException(pautaId);
         });
 
         int duracao = (request.getDuracaoEmMinutos() != null && request.getDuracaoEmMinutos() > 0)

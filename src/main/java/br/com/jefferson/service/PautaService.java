@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.jefferson.dto.PautaRequest;
 import br.com.jefferson.dto.PautaResponse;
+import br.com.jefferson.exception.PautaNaoEncontradaException;
 import br.com.jefferson.model.Pauta;
 import br.com.jefferson.repository.PautaRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class PautaService {
         log.info("Buscando pauta por ID: {}", id);
 
         Pauta pauta = pautaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pauta não encontrada com ID: " + id));
+                .orElseThrow(() -> new PautaNaoEncontradaException(id));
 
         return toResponse(pauta);
     }
