@@ -1,0 +1,238 @@
+# api-votacao
+
+API REST para gerenciamento de sessões de votação cooperativa, permitindo cadastro de pautas, controle de sessões e contabilização de votos.
+
+---
+
+## Tecnologias utilizadas
+
+- Java 25
+- Spring Boot 4.0.3
+- Spring Data JPA
+- MySQL
+- Flyway (migrations)
+- Lombok
+- SpringDoc OpenAPI (Swagger)
+- JUnit 5 + Mockito (testes)
+- Maven
+
+---
+
+## Pré-requisitos
+
+Antes de rodar o projeto, você vai precisar ter instalado na sua máquina:
+
+- [Java 25](https://www.oracle.com/java/technologies/downloads/)
+- [MySQL](https://dev.mysql.com/downloads/)
+- [Maven](https://maven.apache.org/download.cgi)
+- [Spring Tools Suite 4 (STS)](https://spring.io/tools) ou outra IDE de sua preferência
+
+---
+
+## Configuração do banco de dados
+
+1. Acesse o MySQL e crie o banco de dados:
+
+```sql
+CREATE DATABASE api_votacao;
+```
+
+2. Configure as credenciais no arquivo `src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/api_votacao
+spring.datasource.username=seu_usuario
+spring.datasource.password=sua_senha
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+
+server.port=8081
+server.servlet.context-path=/api-votacao
+```
+
+> As tabelas serão criadas automaticamente pelo **Flyway** na primeira execução. Dados de exemplo também serão inseridos automaticamente para facilitar os testes.
+
+---
+
+## Configuração do Lombok no STS
+
+O instalador do Lombok não reconhece o executável do STS 5.x automaticamente. Para resolver isso, siga os passos abaixo:
+
+1. Abra o arquivo `SpringToolsForEclipse.ini` localizado na pasta de instalação do STS. Exemplo:
+
+```
+C:\Users\seu-usuario\Documents\sts\sts-5.1.1.RELEASE\SpringToolsForEclipse.ini
+```
+
+2. Adicione a seguinte linha no **final do arquivo**:
+
+```
+-javaagent:C:\Users\seu-usuario\Documents\sts\sts-5.1.1.RELEASE\lombok.jar
+```
+
+> Ajuste o caminho conforme a localização da sua instalação do STS.
+
+3. Salve o arquivo, feche e reabra o STS.
+
+4. Clique com botão direito no projeto e execute:
+   - `Maven > Update Project (Alt + F5)`
+   - `Project > Clean`
+
+---
+
+## Como rodar o projeto
+
+### Pelo STS
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/jefflennon1/api-votacao.git
+```
+
+2. Importe o projeto no STS:
+   - `File > Import > Maven > Existing Maven Projects`
+   - Selecione a pasta do projeto clonado
+
+3. Aguarde o Maven baixar as dependências
+
+4. Clique com botão direito no projeto:
+   - `Run As > Spring Boot App`
+
+### Pelo terminal
+
+```bash
+git clone https://github.com/seu-usuario/api-votacao.git
+cd api-votacao
+mvn spring-boot:run
+```
+
+---
+
+## Documentação da API (Swagger)
+
+Com a aplicação rodando, acesse:
+
+```
+http://localhost:8081/api-votacao/swagger-ui/index.html
+```
+
+---
+
+## Endpoints disponíveis
+
+| Método | URL | Descrição |
+|--------|-----|-----------|
+| `POST` | `/api/v1/pautas` | Cadastrar nova pauta |
+| `GET` | `/api/v1/pautas` | Listar todas as pautas |
+| `GET` | `/api/v1/pautas/{id}` | Buscar pauta por ID |
+| `POST` | `/api/v1/pautas/{id}/sessao` | Abrir sessão de votação |
+| `POST` | `/api/v1/pautas/{id}/votos` | Registrar voto |
+| `GET` | `/api/v1/pautas/{id}/resultado` | Obter resultado da votação |
+
+---
+
+## Exemplos de uso
+
+### Cadastrar uma pauta
+
+```http
+POST /api/v1/pautas
+Content-Type: application/json
+
+{
+    "titulo": "Aprovação do orçamento anual",
+    "descricao": "Votação para aprovação do orçamento para o ano de 2026"
+}
+```
+
+### Abrir uma sessão de votação
+
+```http
+POST /api/v1/pautas/1/sessao
+Content-Type: application/json
+
+{
+    "duracaoEmMinutos": 5
+}
+```
+
+> Se `duracaoEmMinutos` não for informado, a sessão ficará aberta por **1 minuto** por padrão.
+
+### Registrar um voto
+
+```http
+POST /api/v1/pautas/1/votos
+Content-Type: application/json
+
+{
+    "associadoId": "associado-001",
+    "voto": true
+}
+```
+
+> `true` = Sim, `false` = Não. Cada associado pode votar apenas uma vez por pauta.
+
+### Obter resultado da votação
+
+```http
+GET /api/v1/pautas/1/resultado
+```
+
+Resposta:
+
+```json
+{
+    "pautaId": 1,
+    "tituloPauta": "Aprovação do orçamento anual",
+    "totalVotos": 3,
+    "votosSim": 2,
+    "votosNao": 1,
+    "resultado": "APROVADA"
+}
+```
+
+---
+
+## Rodando os testes
+
+```bash
+mvn test
+```
+
+---
+
+## Decisões técnicas
+
+- **Spring Boot 4.x + Java 25**: versões mais recentes e estáveis disponíveis, garantindo melhor performance e suporte de longo prazo (LTS)
+- **MySQL**: banco de dados relacional robusto e amplamente utilizado no mercado
+- **Flyway**: controle de versão do banco de dados, garantindo que as tabelas e dados sejam criados automaticamente e de forma consistente em qualquer ambiente
+- **JPA + Spring Data**: abstração do banco de dados com queries geradas automaticamente pelo nome dos métodos, reduzindo código boilerplate
+- **Lombok**: redução de código repetitivo (getters, setters, builders, logs)
+- **DTOs separados por Request/Response**: evita expor as entidades diretamente nos endpoints, garantindo maior controle sobre os dados de entrada e saída
+- **Versionamento da API via URL (`/api/v1/`)**: estratégia simples e amplamente adotada que permite evoluir a API sem quebrar clientes existentes
+- **GlobalExceptionHandler**: centraliza o tratamento de erros, retornando respostas padronizadas em JSON para qualquer exceção da aplicação
+
+---
+
+## Estrutura do projeto
+
+```
+src/
+├── main/
+│   ├── java/br/com/jefferson/
+│   │   ├── model/          # Entidades JPA
+│   │   ├── repository/     # Interfaces de acesso ao banco
+│   │   ├── service/        # Regras de negócio
+│   │   ├── resource/       # Endpoints REST
+│   │   ├── dto/            # Objetos de transferência de dados
+│   │   └── exception/      # Exceções customizadas e handler global
+│   └── resources/
+│       ├── db/migration/   # Scripts Flyway
+│       └── application.properties
+└── test/
+    └── java/br/com/jefferson/
+        └── service/        # Testes unitários
+```
