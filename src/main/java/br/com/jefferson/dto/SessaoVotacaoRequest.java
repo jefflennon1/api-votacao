@@ -1,5 +1,6 @@
 package br.com.jefferson.dto;
 
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,6 @@ import lombok.Setter;
 @Setter
 public class SessaoVotacaoRequest {
 
-    // tempo em minutos, se nulo será 1 minuto por default
+    @Min(value = 1, message = "A duração deve ser de no mínimo 1 minuto")
     private Integer duracaoEmMinutos;
 }

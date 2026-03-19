@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,8 +36,9 @@ public class PautaResource {
         @ApiResponse(responseCode = "201", description = "Pauta cadastrada com sucesso"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
+    
     @PostMapping
-    public ResponseEntity<PautaResponse> cadastrar(@RequestBody PautaRequest request) {
+    public ResponseEntity<PautaResponse> cadastrar(@RequestBody @Valid PautaRequest request) {
         log.info("Requisição para cadastrar pauta: {}", request.getTitulo());
         PautaResponse response = pautaService.cadastrar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -47,6 +49,8 @@ public class PautaResource {
         @ApiResponse(responseCode = "200", description = "Pauta encontrada"),
         @ApiResponse(responseCode = "404", description = "Pauta não encontrada")
     })
+    
+    
     @GetMapping("/{id}")
     public ResponseEntity<PautaResponse> buscarPorId(@PathVariable Long id) {
         log.info("Requisição para buscar pauta ID: {}", id);
