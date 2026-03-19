@@ -186,6 +186,48 @@ Resposta:
 }
 ```
 
+
+### Validar CPF do associado
+
+```http
+GET /api/v1/cpf/391.142.817-08
+```
+
+Resposta quando o CPF é válido (resultado aleatório):
+
+```json
+{
+    "status": "ABLE_TO_VOTE"
+}
+```
+
+ou
+
+```json
+{
+    "status": "UNABLE_TO_VOTE"
+}
+```
+
+Resposta quando o CPF é inválido:
+
+```json
+{
+    "status": 404,
+    "mensagem": "CPF inválido: 123",
+    "timestamp": "2026-03-19T10:00:00"
+}
+```
+
+> **Importante:** o CPF pode ser informado com ou sem máscara. Ambos os formatos são aceitos:
+> - Com máscara: `391.142.817-08` ✅
+> - Sem máscara: `39114281708` ✅
+
+Para gerar CPFs válidos para teste, acesse [gerarcpf.com.br](https://www.geradorcpf.com).
+
+
+
+
 ---
 
 ## Rodando os testes
@@ -215,9 +257,7 @@ Clique com o botão direito em cima do projeto > Run As > JUnit Test
 - **GlobalExceptionHandler**: centraliza o tratamento de erros, retornando respostas padronizadas em JSON para qualquer exceção da aplicação
 
 ---
-
 ## Estrutura do projeto
-
 ```
 src/
 ├── main/
@@ -226,6 +266,7 @@ src/
 │   │   ├── repository/     # Interfaces de acesso ao banco
 │   │   ├── service/        # Regras de negócio
 │   │   ├── resource/       # Endpoints REST
+│   │   ├── client/         # Facade de validação de CPF
 │   │   ├── dto/            # Objetos de transferência de dados
 │   │   └── exception/      # Exceções customizadas e handler global
 │   └── resources/
@@ -234,4 +275,5 @@ src/
 └── test/
     └── java/br/com/jefferson/
         └── service/        # Testes unitários
+        
 ```

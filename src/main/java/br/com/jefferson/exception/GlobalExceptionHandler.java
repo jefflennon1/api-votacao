@@ -1,13 +1,14 @@
 package br.com.jefferson.exception;
 
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
@@ -53,6 +54,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(buildErroResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor"));
     }
+    
+    @ExceptionHandler(CpfInvalidoException.class)
+    public ResponseEntity<ErroResponse> handleCpfInvalido(CpfInvalidoException ex) {
+        log.error("CPF inválido: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(buildErroResponse(HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+    
 
     private ErroResponse buildErroResponse(HttpStatus status, String mensagem) {
         return ErroResponse.builder()
