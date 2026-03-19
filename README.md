@@ -277,3 +277,14 @@ src/
         └── service/        # Testes unitários
         
 ```
+
+
+## Teste de performance
+
+Abaixo deixo algumas imagens dos endpoints realizados pelo Jmeter.
+
+<img width="1365" height="767" alt="image" src="https://github.com/user-attachments/assets/a458bcb6-b934-4bab-830e-467882f04ff4" />
+
+
+<img width="1365" height="763" alt="image" src="https://github.com/user-attachments/assets/11e75a66-d976-4cbe-9ae1-7664ded59790" />
+
