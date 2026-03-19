@@ -36,7 +36,6 @@ public class PautaResource {
         @ApiResponse(responseCode = "201", description = "Pauta cadastrada com sucesso"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
-    
     @PostMapping
     public ResponseEntity<PautaResponse> cadastrar(@RequestBody @Valid PautaRequest request) {
         log.info("Requisição para cadastrar pauta: {}", request.getTitulo());

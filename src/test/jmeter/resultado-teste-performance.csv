@@ -1,0 +1,6 @@
+Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
+Listar pautas,100,10,6,15,1.99,0.000%,.91816,6.29,0.13,7011.2
+Buscar paulta por ID,100,5,2,9,1.19,0.000%,.91824,0.30,0.13,334.0
+Cadastrar Pauta,100,14,7,207,19.70,0.000%,.91824,0.27,0.26,302.9
+Buscar resultado,100,7,5,11,1.36,0.000%,.91994,0.27,0.14,298.0
+TOTAL,400,9,2,207,10.57,0.000%,3.67191,7.12,0.65,1986.5
